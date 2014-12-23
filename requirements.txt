@@ -3,7 +3,7 @@ Flask>=0.10
 Flask-SQLAlchemy
 Flask-Testing>=0.4.2
 Flask-Security
-Flask-Login==0.2.3
+Flask-Login>=0.2.11
 Flask-WTF>=0.9.4
 Flask-Script
 Flask-DebugToolbar
@@ -54,7 +54,8 @@ clamd
 
 # Content detection / transformation
 python-magic
-xlwt
+# Replacement (Py3k compatible) for xlwt
+xlwt-future
 xlrd
 
 #

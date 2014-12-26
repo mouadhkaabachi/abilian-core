@@ -6,12 +6,12 @@ NOTE: code is currently quite messy. Needs to be refactored.
 """
 
 import cgi
-import urlparse
 import re
 import base64
 from datetime import datetime
 from itertools import ifilter
 from collections import namedtuple
+from future.moves.urllib.parse import urlsplit
 
 import bleach
 import sqlalchemy as sa
@@ -59,7 +59,7 @@ def linkify_url(value):
   if not url.startswith("http://") and not url.startswith("https://"):
     url = "http://" + url
 
-  url = urlparse.urlsplit(url).geturl()
+  url = urlsplit(url).geturl()
   if '"' in url:
     url = url.split('"')[0]
   if '<' in url:

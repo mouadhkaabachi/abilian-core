@@ -8,10 +8,9 @@ Notes:
 from __future__ import absolute_import
 
 from datetime import datetime
-
 import random
 import string
-from urlparse import urlparse, urljoin
+from future.moves.urllib.parse import urlparse, urljoin
 
 from sqlalchemy import sql
 from sqlalchemy.orm.exc import NoResultFound

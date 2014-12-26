@@ -1,7 +1,7 @@
 # coding=utf-8
 """
 """
-from __future__ import absolute_import
+from __future__ import absolute_import, print_function
 
 from collections import deque
 import time
@@ -70,7 +70,7 @@ def reindex(clear=False, progressive=False, batch_size=None):
       count = q.count()
 
       if count == 0:
-        print "{}: 0".format(name)
+        print("{}: 0".format(name))
         continue
 
       widgets = [name,
@@ -129,9 +129,9 @@ def reindex(clear=False, progressive=False, batch_size=None):
 def single_transaction(index, clear, **kwargs):
   with AsyncWriter(index) as writer:
     if clear:
-      print "*" * 80
-      print "WILL CLEAR INDEX BEFORE REINDEXING"
-      print "*" * 80
+      print("*" * 80)
+      print("WILL CLEAR INDEX BEFORE REINDEXING")
+      print("*" * 80)
       writer.writer.mergetype = CLEAR
 
     doc = yield True
@@ -145,9 +145,9 @@ def single_transaction(index, clear, **kwargs):
         writer.add_document(**doc)
       doc = yield True
 
-    print "Writing Index...",
+    print("Writing Index...", end=" ")
 
-  print "Done."
+  print("Done.")
 
 
 def _get_writer(index):
@@ -165,9 +165,9 @@ def progressive_mode(index, clear, batch_size, **kwargs):
 
   if clear:
     writer = _get_writer(index)
-    print "*" * 80
-    print "CLEAR INDEX BEFORE REINDEXING"
-    print "*" * 80
+    print("*" * 80)
+    print("CLEAR INDEX BEFORE REINDEXING")
+    print("*" * 80)
     writer.writer.mergetype = CLEAR
     writer.commit()
     del writer

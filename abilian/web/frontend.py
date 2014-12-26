@@ -5,7 +5,7 @@ Front-end for a CRM app.
 
 This should eventually allow implementing very custom CRM-style application.
 """
-import StringIO
+from io import BytesIO
 import logging
 import copy
 import csv
@@ -502,7 +502,7 @@ class Module(object):
         else:
           ws.write(r + 1, c, value)
 
-    fd = StringIO.StringIO()
+    fd = BytesIO()
     wb.save(fd)
 
     debug = request.args.get('debug_sql')
@@ -520,7 +520,8 @@ class Module(object):
   @expose("/export")
   def export_to_csv(self):
     # TODO: take care of all the special cases
-    csvfile = StringIO.StringIO()
+    # TODO: StringIO or BytesIO ?
+    csvfile = BytesIO()
     writer = csv.writer(csvfile)
 
     objects = self.ordered_query(request).all()

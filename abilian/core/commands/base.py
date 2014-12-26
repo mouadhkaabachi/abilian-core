@@ -1,5 +1,5 @@
 # coding=utf-8
-from __future__ import absolute_import
+from __future__ import absolute_import, print_function
 import os
 import logging
 from pprint import pformat
@@ -100,7 +100,7 @@ def dumproutes():
   rules = list(current_app.url_map.iter_rules())
   rules.sort(key=lambda x: x.rule)
   for rule in rules:
-    print "{} ({}) -> {}".format(rule, " ".join(rule.methods), rule.endpoint)
+    print("{} ({}) -> {}".format(rule, " ".join(rule.methods), rule.endpoint))
 
 
 @manager.command
@@ -119,7 +119,7 @@ def createuser(email, password, role=None, name=None, first_name=None):
     security.grant_role(user, role)
 
   db.session.commit()
-  print "User {} added".format(email)
+  print("User {} added".format(email))
 
 
 @manager.command
@@ -138,4 +138,4 @@ def passwd(email, password=None):
 
   user.set_password(password)
   db.session.commit()
-  print "Password updated for user {}".format(email)
+  print("Password updated for user {}".format(email))

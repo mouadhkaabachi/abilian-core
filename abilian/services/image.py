@@ -3,7 +3,7 @@ Provides tools (currently: only functions, not a real service) for image
 processing.
 """
 
-from cStringIO import StringIO
+from io import BytesIO
 from PIL import Image
 
 import hashlib
@@ -16,7 +16,7 @@ cache = {}
 
 
 def get_format(img):
-  image = Image.open(StringIO(img))
+  image = Image.open(BytesIO(img))
   return image.format
 
 
@@ -25,7 +25,7 @@ def resize(orig, hsize):
   if cache_key in cache:
     return cache[cache_key]
 
-  image = Image.open(StringIO(orig))
+  image = Image.open(BytesIO(orig))
   format = image.format
   x, y = image.size
 
@@ -35,7 +35,7 @@ def resize(orig, hsize):
   x1 = hsize
   y1 = int(1.0 * y * hsize / x)
   image.thumbnail((x1, y1), Image.ANTIALIAS)
-  output = StringIO()
+  output = BytesIO()
 
   if format == 'PNG':
     image.save(output, "PNG")
@@ -54,7 +54,7 @@ def crop_and_resize(orig, hsize, vsize=0):
   if cache_key in cache:
     return cache[cache_key]
 
-  image = Image.open(StringIO(orig))
+  image = Image.open(BytesIO(orig))
   format = image.format
 
   # Compute cropping coordinates
@@ -72,7 +72,7 @@ def crop_and_resize(orig, hsize, vsize=0):
 
   image.thumbnail((hsize, vsize), Image.ANTIALIAS)
 
-  output = StringIO()
+  output = BytesIO()
   if format == 'PNG':
     image.save(output, "PNG")
   else:

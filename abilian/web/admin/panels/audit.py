@@ -6,6 +6,7 @@ from datetime import datetime
 from itertools import chain
 from markupsafe import Markup
 import pytz
+from past.builtins import cmp
 
 from flask import request, render_template, render_template_string, \
   get_template_attribute

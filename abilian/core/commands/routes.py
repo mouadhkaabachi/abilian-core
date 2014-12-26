@@ -19,4 +19,4 @@ def list_routes():
     output.append((rule.endpoint, methods, path))
 
   for endpoint, methods, path in sorted(output):
-    print '{:40s} {:25s} {}'.format(endpoint, methods, path)
+    print('{:40s} {:25s} {}'.format(endpoint, methods, path))

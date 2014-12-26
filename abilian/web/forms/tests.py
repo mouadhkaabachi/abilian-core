@@ -60,7 +60,7 @@ class FieldsTestCase(BaseTestCase):
       # thus we compare with tzinfo=user_tz
       self.assertEquals(
         f.data,
-        datetime.datetime(1789, 06, 17, 10, 42, tzinfo=USER_TZ))
+        datetime.datetime(1789, 6, 17, 10, 42, tzinfo=USER_TZ))
       # UTC stored
       self.assertIs(f.data.tzinfo, pytz.utc)
       # displayed in user current timezone
@@ -80,5 +80,5 @@ class FieldsTestCase(BaseTestCase):
     with self.app.test_request_context(headers={'Accept-Language': 'fr-FR,fr;q=0.8'}):
       f = fields.DateField().bind(Form(), 'dt')
       f.process_formdata(['17/06/1789'])
-      self.assertEquals(f.data, datetime.date(1789, 06, 17))
+      self.assertEquals(f.data, datetime.date(1789, 6, 17))
       self.assertEquals(f._value(), u'17/06/1789')

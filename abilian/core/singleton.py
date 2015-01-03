@@ -1,7 +1,9 @@
 # coding=utf-8
 """
 """
+# Py3k
 from __future__ import absolute_import
+from builtins import str
 
 
 class ValueSingletonMeta(type):
@@ -42,7 +44,7 @@ class UniqueName(object):
   attr = 'name'
 
   def __init__(self, name):
-    self.__name = unicode(name).strip().lower()
+    self.__name = str(name).strip().lower()
     self._hash = hash(self.__name)
 
   @property
@@ -61,7 +63,7 @@ class UniqueName(object):
   def __eq__(self, other):
     if isinstance(other, self.__class__):
       return self._hash == other._hash
-    return self.__name == unicode(other)
+    return self.__name == str(other)
 
   def __hash__(self):
     return self._hash

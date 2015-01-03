@@ -4,6 +4,10 @@ A few utility functions.
 See https://docs.djangoproject.com/en/dev/topics/http/shortcuts/ for more ideas
 of stuff to implement.
 """
+# Py3k
+from __future__ import absolute_import
+from past.builtins import basestring
+
 import logging
 import sys
 from werkzeug.routing import BuildError

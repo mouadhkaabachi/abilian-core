@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from abilian.core.models.subjects import User
+from __future__ import unicode_literals, absolute_import
+from builtins import str
 
+
+from abilian.core.models.subjects import User
 
 def test_non_ascii_password():
   """Ensure we can store and test non-ascii password without
@@ -9,10 +12,10 @@ def test_non_ascii_password():
   """
   user = User()
 
-  user.set_password(u'Hé')
+  user.set_password('Hé')
 
-  if not isinstance(user.password, unicode):
+  if not isinstance(user.password, str):
     # when actually retrieved from database, it should be unicode
-    user.password = unicode(user.password)
+    user.password = str(str.password)
 
-  assert user.authenticate(u'Hé')
+  assert user.authenticate('Hé')

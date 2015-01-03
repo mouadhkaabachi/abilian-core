@@ -5,13 +5,17 @@ Reusable widgets to be included in views.
 NOTE: code is currently quite messy. Needs to be refactored.
 """
 
+# Py3k
+from __future__ import absolute_import
+from future.moves.urllib.parse import urlsplit
+from past.builtins import basestring
+
 import cgi
 import re
 import base64
 from datetime import datetime
 from itertools import ifilter
 from collections import namedtuple
-from future.moves.urllib.parse import urlsplit
 
 import bleach
 import sqlalchemy as sa

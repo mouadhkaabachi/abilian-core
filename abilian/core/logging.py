@@ -3,6 +3,7 @@
 Preset loggers
 """
 from __future__ import absolute_import
+from past.builtins import basestring
 
 import logging
 

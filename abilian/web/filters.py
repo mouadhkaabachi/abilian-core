@@ -1,6 +1,9 @@
 """
 Add a few specific filters to Jinja2.
 """
+# Py3k
+from __future__ import absolute_import
+from builtins import str
 
 import re
 from functools import wraps
@@ -91,7 +94,7 @@ def roughsize(size, above=20, mod=10):
   134 -> '130+'
   """
   if size < above:
-    return unicode(size)
+    return str(size)
 
   return u'{:d}+'.format(size - size % mod)
 

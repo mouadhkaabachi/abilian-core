@@ -1,7 +1,9 @@
 # coding=utf-8
 """
 """
+# Py3k
 from __future__ import absolute_import
+from builtins import str
 
 from sqlalchemy.schema import Column, ForeignKey
 from sqlalchemy.orm import relationship
@@ -42,7 +44,7 @@ class OwnedMixin(object):
 
   @property
   def creator_name(self):
-    return unicode(self.creator) if self.creator else u''
+    return str(self.creator) if self.creator else u''
 
   @declared_attr
   def owner_id(cls):
@@ -56,4 +58,4 @@ class OwnedMixin(object):
 
   @property
   def owner_name(self):
-    return unicode(self.owner) if self.owner else u''
+    return str(self.owner) if self.owner else u''

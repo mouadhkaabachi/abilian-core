@@ -2,7 +2,9 @@
 """
 Field filters for WTForm.
 """
+# Py3k
 from __future__ import absolute_import
+from past.builtins import basestring
 
 
 def strip(data):

@@ -3,6 +3,7 @@
 Objects to schema adapters
 """
 from __future__ import absolute_import
+from past.builtins import basestring
 
 import logging
 from abc import ABCMeta, abstractmethod

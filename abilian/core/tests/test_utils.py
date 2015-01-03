@@ -1,5 +1,8 @@
 # coding=utf-8
 
+# Py3k
+from builtins import str
+
 from abilian.core.util import Pagination, slugify
 
 
@@ -46,7 +49,7 @@ def test_pagination_4():
 def test_slugify_basic():
   slug = slugify(u'a b c')
   assert slug == u'a-b-c'
-  assert isinstance(slug, unicode)
+  assert isinstance(slug, str)
   assert slugify(slug) == u'a-b-c'  # idempotent
 
 
@@ -58,7 +61,7 @@ def test_slugify_separator():
 def test_slugify_non_unicode_input():
   slug = slugify(b"a b c")
   assert slug == u'a-b-c'
-  assert isinstance(slug, unicode)
+  assert isinstance(slug, str)
 
 
 def test_slugify_non_ascii():

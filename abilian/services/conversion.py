@@ -9,6 +9,8 @@ Assumes poppler-utils and LibreOffice are installed.
 
 TODO: rename Converter into ConversionService ?
 """
+from __future__ import absolute_import
+from builtins import str
 
 import glob
 import hashlib
@@ -377,7 +379,7 @@ class AbiwordTextHandler(Handler):
 class AbiwordPDFHandler(Handler):
   accepts_mime_types = ['application/msword',
                         'application/vnd.oasis.opendocument.text',
-                        'text/rtf',]
+                        'text/rtf']
   produces_mime_types = ['application/pdf']
 
   def convert(self, blob, **kw):

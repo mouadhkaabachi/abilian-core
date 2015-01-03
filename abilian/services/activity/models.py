@@ -8,6 +8,9 @@ See: http://stackoverflow.com/questions/1443960/how-to-implement-the-activity-st
 TODO: Look wether other attributes from the spec need to be implemented.
 """
 
+from __future__ import absolute_import
+from builtins import str
+
 from datetime import datetime
 from flask import logging
 
@@ -59,8 +62,8 @@ class ActivityEntry(db.Model):
     return ('<{}.ActivityEntry id={} actor={} verb={} object={} '
             'target={}>'.format(
         self.__class__.__module__, self.id,
-        repr(unicode(self.actor)),
+        repr(str(self.actor)),
         repr(self.verb),
-        repr(unicode(self.object)),
-        repr(unicode(self.target)))
+        repr(str(self.object)),
+        repr(str(self.target)))
     )

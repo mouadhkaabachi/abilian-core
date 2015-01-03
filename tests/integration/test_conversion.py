@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 from warnings import warn
 import tempfile
 from os.path import join, dirname
@@ -5,7 +7,7 @@ from unittest import TestCase
 from magic import Magic, os
 
 # Don't remove
-import fix_path
+from . import fix_path  # noqa
 
 from abilian.services.conversion import converter
 
@@ -34,7 +36,7 @@ class Test(TestCase):
   def read_file(self, fn):
     try:
       return open(join(BASEDIR, fn)).read()
-    except IOError as e:
+    except IOError:
       return open(join(BASEDIR2, fn)).read()
 
   # To text
@@ -43,19 +45,19 @@ class Test(TestCase):
       warn("pdftotext not found, skipping test")
       return
     blob = self.read_file("onepage.pdf")
-    text = converter.to_text("", blob, "application/pdf")
+    text = converter.to_text("", blob, "application/pdf")  # noqa
 
   def XXXtest_word_to_text(self):
     blob = self.read_file("test.doc")
-    text = converter.to_text("", blob, "application/msword")
+    text = converter.to_text("", blob, "application/msword")  # noqa
 
   def XXXtest_wordx_to_text(self):
     blob = self.read_file("test.docx")
-    text = converter.to_text("", blob, "application/msword")
+    text = converter.to_text("", blob, "application/msword")  # noqa
 
   def XXXtest_excel_to_text(self):
     blob = self.read_file("test.xls")
-    text = converter.to_text("", blob, "application/excel")
+    text = converter.to_text("", blob, "application/excel")  # noqa
 
   # To PDF
   def XXXtest_odt_to_pdf(self):

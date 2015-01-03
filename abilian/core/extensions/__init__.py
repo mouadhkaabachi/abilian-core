@@ -14,7 +14,7 @@ __all__ = ['get_extension', 'db', 'mail', 'celery', 'login_manager', 'csrf',
 
 from abilian.core.logging import patch_logger
 
-from . import upstream_info
+from abilian.core.extensions import upstream_info
 
 # celery
 #

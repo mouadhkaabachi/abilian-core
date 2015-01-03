@@ -20,10 +20,8 @@ from sqlalchemy.orm.attributes import NO_VALUE
 from werkzeug.datastructures import ImmutableDict
 from babel.dates import LOCALTZ
 import jinja2
-from flask import (
-  Flask, g, request, current_app, has_app_context, render_template,
-  request_started, Blueprint, abort
-  )
+from flask import Flask, g, request, current_app, has_app_context, \
+  render_template, request_started, Blueprint, abort
 from flask.config import ConfigAttribute
 from flask.helpers import locked_cached_property
 from flask.ext.assets import Bundle, Environment as AssetsEnv
@@ -112,8 +110,8 @@ default_config.update(
     ),
     SENTRY_USER_ATTRS=('email', 'first_name', 'last_name',),
     LOGO_URL=Endpoint('abilian_static', filename='img/logo-abilian-32x32.png'),
-    ABILIAN_UPSTREAM_INFO_ENABLED=False, # upstream info extension
-    TRACKING_CODE_SNIPPET=u'', # tracking code to insert before </body>
+    ABILIAN_UPSTREAM_INFO_ENABLED=False,  # upstream info extension
+    TRACKING_CODE_SNIPPET=u'',  # tracking code to insert before </body>
 )
 default_config = ImmutableDict(default_config)
 
@@ -273,7 +271,7 @@ class Application(Flask, ServiceManager, PluginManager):
     If you want to customize first items of breadcrumbs, override
     :meth:`init_breadcrumbs`
     """
-    g.nav = {'active': None} # active section
+    g.nav = {'active': None}  # active section
     g.breadcrumb = []
     self.init_breadcrumbs()
 
@@ -302,7 +300,7 @@ class Application(Flask, ServiceManager, PluginManager):
     if not path.exists():
       if create:
         logger.info('Create instance folder: %s', unicode(path).encode('utf-8'))
-        path.mkdir(0775, parents=True)
+        path.mkdir(0o775, parents=True)
       else:
         err = 'Instance folder does not exists'
         eno = errno.ENOENT
@@ -317,7 +315,7 @@ class Application(Flask, ServiceManager, PluginManager):
       raise OSError(eno, err, str(path))
 
     if not self.DATA_DIR.exists():
-      self.DATA_DIR.mkdir(0775, parents=True)
+      self.DATA_DIR.mkdir(0o775, parents=True)
 
   def make_config(self, instance_relative=False):
     config = Flask.make_config(self, instance_relative)
@@ -348,8 +346,9 @@ class Application(Flask, ServiceManager, PluginManager):
     return config
 
   def setup_logging(self):
-    self.logger  # force flask to create application logger before logging
-                 # configuration; else, flask will overwrite our settings
+    # force flask to create application logger before logging
+    # configuration; else, flask will overwrite our settings
+    self.logger
 
     log_level = self.config.get("LOG_LEVEL")
     if log_level:
@@ -391,7 +390,7 @@ class Application(Flask, ServiceManager, PluginManager):
           default_config = dbt._default_config(self)
           init_dbt = dbt.init_app
 
-        if not 'DEBUG_TB_PANELS' in self.config:
+        if 'DEBUG_TB_PANELS' not in self.config:
           # add our panels to default ones
           self.config['DEBUG_TB_PANELS'] = list(default_config['DEBUG_TB_PANELS'])
           self.config['DEBUG_TB_PANELS'].append(
@@ -547,7 +546,7 @@ class Application(Flask, ServiceManager, PluginManager):
     if 'bytecode_cache' not in options:
       cache_dir = Path(self.instance_path, 'cache', 'jinja')
       if not cache_dir.exists():
-        cache_dir.mkdir(0775, parents=True)
+        cache_dir.mkdir(0o775, parents=True)
 
       options['bytecode_cache'] = jinja2.FileSystemBytecodeCache(str(cache_dir),
                                                                  '%s.cache')
@@ -640,7 +639,6 @@ class Application(Flask, ServiceManager, PluginManager):
       # replace obj instance in bad session by new instance in fresh session
       setattr(g, key, session.merge(obj, load=load))
 
-
   def log_exception(self, exc_info):
     """
     Log exception only if sentry is not installed (this avoids getting error
@@ -713,8 +711,8 @@ class Application(Flask, ServiceManager, PluginManager):
 
     assets.config['CLOSURE_EXTRA_ARGS'] = [
       '--jscomp_warning', 'internetExplorerChecks',
-    #   '--source_map_format', 'V3',
-    #   '--create_source_map', os.path.join(assets.directory, 'js.map')
+      # '--source_map_format', 'V3',
+      # '--create_source_map', os.path.join(assets.directory, 'js.map')
     ]
 
     # setup static url for our assets

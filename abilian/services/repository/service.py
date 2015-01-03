@@ -1,7 +1,10 @@
 # coding=utf-8
 """
 """
+
+# Py3k
 from __future__ import absolute_import
+from past.builtins import basestring
 
 from uuid import UUID, uuid1
 import weakref
@@ -41,7 +44,7 @@ class RepositoryService(Service):
 
     path = app.DATA_DIR / 'files'
     if not path.exists():
-      path.mkdir(0775)
+      path.mkdir(0o775)
 
     with app.app_context():
       self.app_state.path = path.resolve()
@@ -389,7 +392,7 @@ class RepositoryTransaction(object):
 
   def begin(self, session=None):
     if not self.path.exists():
-      self.path.mkdir(0700)
+      self.path.mkdir(0o700)
 
   def rollback(self, session=None):
     self._clear()

@@ -2,7 +2,10 @@
 """
 Various tools that don't belong some place specific.
 """
+# Py3k
 from __future__ import absolute_import
+from builtins import str
+from builtins import range
 
 import functools
 import logging
@@ -11,8 +14,6 @@ import pytz
 from math import ceil
 import unicodedata
 import re
-from builtins import range
-
 
 from flask import request
 from babel.dates import LOCALTZ
@@ -33,7 +34,7 @@ def fqcn(cls):
   """
   Fully Qualified Class Name
   """
-  return unicode(cls.__module__ + '.' + cls.__name__)
+  return str(cls.__module__ + '.' + cls.__name__)
 
 
 def friendly_fqcn(cls_name):
@@ -175,8 +176,8 @@ def slugify(value, separator=u"-"):
   """
     Slugify an unicode string, to make it URL friendly.
   """
-  value = unicode(value)
-  separator = unicode(separator)
+  value = str(value)
+  separator = str(separator)
   value = _NOT_WORD_RE.sub(u' ', value)
   value = unicodedata.normalize('NFKD', value)
   value = value.encode('ascii', 'ignore')

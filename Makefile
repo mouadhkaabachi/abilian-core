@@ -11,6 +11,21 @@ NCPU=2
 all: test doc
 
 #
+# Setup
+#
+develop: setup-git
+	@echo "--> Installing dependencies"
+	pip install -U setuptools
+	pip install -e .
+
+setup-git:
+	@echo "--> Configuring git and installing hooks"
+	git config branch.autosetuprebase always
+	cd .git/hooks && ln -sf ../../tools/hooks/* ./
+	@echo ""
+
+
+#
 # testing & checking
 #
 test:
@@ -20,12 +35,17 @@ test-with-coverage:
 	py.test -n $(NCPU) --cov $(PKG) --cov-config etc/coverage.rc \
 	  --cov-report term-missing $(PKG) tests
 
-tox:
-	tox
 
 #
 # Various Checkers
 #
+lint: lint-js lint-python
+
+lint-js:
+	@echo "No JavaScript files to check"
+
+lint-python: flake8
+	
 pep8:
 	pep8 -r $(SRC)
 

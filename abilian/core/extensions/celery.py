@@ -3,7 +3,7 @@
 """
 from __future__ import absolute_import
 
-from celery import Celery
+from celery import Celery as OrigCelery
 from celery.loaders.base import BaseLoader
 from celery.utils.imports import symbol_by_name
 
@@ -14,8 +14,7 @@ def default_app_factory():
 
 
 def is_celery_setting(key):
-  return key.startswith('CELERY') \
-    or key in ('BROKER_URL',)
+  return key.startswith('CELERY') or key in ('BROKER_URL',)
 
 
 class FlaskLoader(BaseLoader):
@@ -64,15 +63,17 @@ class FlaskLoader(BaseLoader):
   def on_worker_init(self):
     """This method is called when the worker (:program:`celeryd`)
     starts."""
+    pass
 
   def on_worker_process_init(self):
     """This method is called when a child process starts."""
     pass
 
 
-class FlaskCelery(Celery):
+class Celery(OrigCelery):
   # can be overriden on command line with --loader
   loader_cls = __name__ + '.' + FlaskLoader.__name__
+
 
 # celery
 #
@@ -84,4 +85,4 @@ class FlaskCelery(Celery):
 #
 # Application should set flask_app and configure celery
 # (i.e. celery.config_from_object, etc)
-celery = FlaskCelery()
+#celery = FlaskCelery()

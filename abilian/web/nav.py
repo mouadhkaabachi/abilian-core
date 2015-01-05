@@ -9,6 +9,7 @@ Abilian define theses categories:
     User for element that should appear in user menu
 """
 from __future__ import absolute_import
+from past.builtins import basestring
 
 from flask import g
 from jinja2 import Template, Markup

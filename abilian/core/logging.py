@@ -35,7 +35,7 @@ class PatchLoggerAdapter(logging.LoggerAdapter):
       func = func.im_func
       location = '{}.{}'.format(cls.__module__, cls.__name__)
 
-    return '{}.{}'.format(location, func.func_name), kwargs
+    return '{}.{}'.format(location, func.__name__), kwargs
 
 
 #: logger for monkey patchs. use like this:

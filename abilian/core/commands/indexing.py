@@ -2,6 +2,7 @@
 """
 """
 from __future__ import absolute_import, print_function
+from past.builtins import basestring
 
 from collections import deque
 import time

@@ -25,7 +25,10 @@ import os
 import subprocess
 import threading
 from base64 import encodestring, decodestring
-from xmlrpclib import ServerProxy
+try:
+  from xmlrpclib import ServerProxy
+except:  # Py3k
+  xmlrpclib = None
 import mimetypes
 import re
 from io import BytesIO
@@ -72,7 +75,7 @@ class Cache(object):
     if key in self:
       value = self._path(key).open('rb').read()
       if key.startswith("txt:"):
-        value = unicode(value, encoding="utf8")
+        value = str(value, encoding="utf8")
       return value
     else:
       return None
@@ -253,13 +256,13 @@ class Converter(object):
       for line in output.split("\n"):
         if ":" in line:
           key, value = line.strip().split(":", 1)
-          ret["PDF:" + key] = unicode(value.strip(), errors="replace")
+          ret["PDF:" + key] = str(value.strip(), errors="replace")
 
       return ret
 
   @staticmethod
   def digest(blob):
-    assert type(blob) in (str, unicode)
+    assert type(blob) in (str, str)
     if type(blob) == str:
       digest = hashlib.md5(blob).hexdigest()
     else:
@@ -334,10 +337,10 @@ class PdfToTextHandler(Handler):
     if encoding in ("binary", None):
       encoding = "ascii"
     try:
-      converted_unicode = unicode(converted, encoding, errors="ignore")
+      converted_unicode = str(converted, encoding, errors="ignore")
     except:
       traceback.print_exc()
-      converted_unicode = unicode(converted, errors="ignore")
+      converted_unicode = str(converted, errors="ignore")
 
     return converted_unicode
 
@@ -368,10 +371,10 @@ class AbiwordTextHandler(Handler):
     if encoding in ("binary", None):
       encoding = "ascii"
     try:
-      converted_unicode = unicode(converted, encoding, errors="ignore")
+      converted_unicode = str(converted, encoding, errors="ignore")
     except:
       traceback.print_exc()
-      converted_unicode = unicode(converted, errors="ignore")
+      converted_unicode = str(converted, errors="ignore")
 
     return converted_unicode
 
@@ -605,10 +608,10 @@ class WvwareTextHandler(Handler):
       if encoding in ("binary", None):
         encoding = "ascii"
       try:
-        converted_unicode = unicode(converted, encoding, errors="ignore")
+        converted_unicode = str(converted, encoding, errors="ignore")
       except:
         traceback.print_exc()
-        converted_unicode = unicode(converted, errors="ignore")
+        converted_unicode = str(converted, errors="ignore")
 
       return converted_unicode
 

@@ -2,6 +2,8 @@
 Base Flask application class, used by tests or to be extended
 in real applications.
 """
+from __future__ import division
+
 import os
 import errno
 import yaml
@@ -408,7 +410,7 @@ class Application(Flask, ServiceManager, PluginManager):
     self.init_debug_toolbar()
     redis.Extension(self)
     extensions.mail.init_app(self)
-    extensions.upstream_info.extension.init_app(self)
+    extensions.upstream_info.init_app(self)
     actions.init_app(self)
 
     from abilian.core.jinjaext import DeferredJS

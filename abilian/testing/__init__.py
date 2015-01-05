@@ -1,6 +1,7 @@
 """
 Elements to build test cases for an :class:`abilian.app.Application`
 """
+from past.builtins import basestring
 
 import os
 from time import time

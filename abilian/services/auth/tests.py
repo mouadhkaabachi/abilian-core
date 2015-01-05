@@ -61,7 +61,6 @@ class TestAuth(BaseTestCase):
     with self.app.test_request_context(form_url(next=u'/////google.com')):
       assert get_redirect_target() == url_root + u'///google.com'
 
-
   def test_login_post(self):
     kwargs = dict(email=u'User@domain.tld', password='azerty', can_login=True)
     u = User(**kwargs)

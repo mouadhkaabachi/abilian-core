@@ -9,7 +9,7 @@ from os.path import isabs
 import json
 import re
 from functools import partial
-from cStringIO import StringIO
+from io import BytesIO
 
 from webassets.filter import Filter, register_filter, get_filter, ExternalTool
 from webassets.utils import working_directory
@@ -251,7 +251,7 @@ class Less(ExternalTool):
       args.extend(self.extra_args)
 
     args.append('-')
-    buf = StringIO()
+    buf = BytesIO()
     with working_directory(filename=output_path):
       self.subprocess(args, buf, in_)
 

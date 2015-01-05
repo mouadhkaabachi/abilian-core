@@ -1,4 +1,5 @@
 # coding=utf-8
+# FIXME: what's an "upstream server"?
 """
 Extension for sending informations to upstream server
 """
@@ -56,6 +57,3 @@ class UpstreamInfo(object):
 
   def user_loaded(self, app, user, *args, **kwargs):
     _request_ctx_stack.top.upstream_info['Username'] = user.email
-
-
-extension = UpstreamInfo()

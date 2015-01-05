@@ -6,7 +6,7 @@ NOTE: code is currently quite messy. Needs to be refactored.
 """
 
 # Py3k
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 from future.moves.urllib.parse import urlsplit
 from past.builtins import basestring
 
@@ -14,7 +14,7 @@ import cgi
 import re
 import base64
 from datetime import datetime
-from itertools import ifilter
+from builtins import filter
 from collections import namedtuple
 
 import bleach
@@ -215,7 +215,7 @@ class BaseTableView(object):
       elif isinstance(value, list):
         cell = "; ".join(value)
       else:
-        cell = unicode(value)
+        cell = str(value)
 
       line.append(cell)
     return line
@@ -294,7 +294,7 @@ class AjaxMainTableView(object):
     }
 
     advanced_search_filters = [dict(name=c.name,
-                                    label=unicode(c.label),
+                                    label=str(c.label),
                                     type=c.form_filter_type,
                                     args=c.form_filter_args)
                                for c in self.search_criterions
@@ -338,14 +338,14 @@ class AjaxMainTableView(object):
       elif isinstance(value, Entity):
         cell = Markup('<a href="%s">%s</a>'
                       % (url_for(value), cgi.escape(value.name)))
-      elif (isinstance(value, basestring)
+      elif (isinstance(value, str)
             and (value.startswith("http://") or value.startswith("www."))):
         cell = Markup(linkify_url(value))
       elif col.get('linkable'):
         cell = Markup('<a href="%s">%s</a>'
-                      % (url_for(entity), cgi.escape(unicode(value))))
+                      % (url_for(entity), cgi.escape(str(value))))
       else:
-        cell = unicode(value)
+        cell = str(value)
 
       line.append(cell)
     return line
@@ -623,7 +623,7 @@ class Chosen(Select):
     options = dict(kwargs, value=value)
     if selected:
       options['selected'] = True
-    return HTMLString(u'<option %s>%s</option>' % (html_params(**options), cgi.escape(unicode(label))))
+    return HTMLString(u'<option %s>%s</option>' % (html_params(**options), cgi.escape(str(label))))
 
 
 class TagInput(Input):
@@ -793,8 +793,8 @@ class DefaultViewWidget(object):
     if isinstance(value, basestring):
       return text2html(value)
     else:
-      return unicode(value or u'')  # [], None and other must be rendered using
-                                    # empty string
+      # [], None and others must be rendered using empty string
+      return str(value or u'')
 
 
 class BooleanWidget(wtforms.widgets.CheckboxInput):
@@ -1016,7 +1016,7 @@ class ModelListWidget(object):
     rows = []
     for entry in field.entries:
       row = []
-      for f in ifilter(lambda f: not f.is_hidden, entry.form):
+      for f in filter(lambda f: not f.is_hidden, entry.form):
         row.append(Markup(f.render_view()))
 
       rows.append(Data(*row))

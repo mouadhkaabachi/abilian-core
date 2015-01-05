@@ -5,6 +5,8 @@ Currently very simple (simplisitic?).
 
 Roles and permissions are just strings, and are currently hardcoded.
 """
+from past.builtins import basestring
+
 from functools import wraps
 from itertools import chain
 

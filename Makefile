@@ -100,7 +100,7 @@ clean:
 	rm -rf dist build
 	rm -rf htmlcov
 	rm -rf docs/_build
-	rm -f junit-py27.xml
+	rm -f junit-py??.xml coverage.xml
 
 tidy: clean
 	rm -rf .tox .dox .travis-solo

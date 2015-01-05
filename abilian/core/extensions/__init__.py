@@ -9,30 +9,44 @@ Create all standard extensions.
 
 from __future__ import absolute_import
 
+from flask import current_app
+from flask.ext.mail import Mail, Message
+from flask.ext.wtf.csrf import CsrfProtect
+from flask.ext.login import LoginManager
+
+import sqlalchemy as sa
+from abilian.core.logging import patch_logger
+
+from ..sqlalchemy import SQLAlchemy
+
+from .upstream_info import UpstreamInfo
+from .celery import Celery
+
+
 __all__ = ['get_extension', 'db', 'mail', 'celery', 'login_manager', 'csrf',
            'upstream_info']
 
-from abilian.core.logging import patch_logger
 
-from abilian.core.extensions import upstream_info
-
-# celery
 #
-# for defining a task:
-#
-# from abilian.core.extensions import celery
-# @celery.task
-# def ...
-#
-# Application should set flask_app and configure celery
-# (i.e. celery.config_from_object, etc)
-from ..celery import celery
-
-from flask import current_app
-
 # Standard extensions.
-import flask.ext.mail as flask_mail
+#
+mail = Mail()
+db = SQLAlchemy()
+csrf = CsrfProtect()
+login_manager = LoginManager()
+celery = Celery()
+upstream_info = UpstreamInfo()
 
+
+def get_extension(name):
+  """Get the named extension from the current app, returning None if not found.
+  """
+  return current_app.extensions.get(name)
+
+
+#
+# Monkey patches
+#
 
 # patch flask.ext.mail.Message.send to always set enveloppe_from default mail
 # sender
@@ -50,16 +64,10 @@ def _message_send(self, connection):
   self.extra_headers['Sender'] = sender
   connection.send(self, sender)
 
-patch_logger.info(flask_mail.Message.send)
-flask_mail.Message.send = _message_send
+patch_logger.info(Message.send)
+Message.send = _message_send
 
 
-mail = flask_mail.Mail()
-
-
-import sqlalchemy as sa
-from ..sqlalchemy import SQLAlchemy
-db = SQLAlchemy()
 
 @sa.event.listens_for(db.metadata, 'before_create')
 @sa.event.listens_for(db.metadata, 'before_drop')
@@ -81,18 +89,6 @@ def _filter_metadata_for_connection(target, connection, **kw):
       if engine not in idx.info.get('engines', default_engines):
         table.indexes.remove(idx)
 
-
-# csrf
-from flask.ext.wtf.csrf import CsrfProtect
-csrf = CsrfProtect()
-
-
-def get_extension(name):
-  """Get the named extension from the current app, returning None if not found.
-  """
-
-  from flask import current_app
-  return current_app.extensions.get(name)
 
 
 def _install_get_display_value(cls):
@@ -133,5 +129,3 @@ def _install_get_display_value(cls):
 sa.event.listen(db.Model, 'class_instrument', _install_get_display_value)
 
 
-from flask.ext.login import LoginManager
-login_manager = LoginManager()

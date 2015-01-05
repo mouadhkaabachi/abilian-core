@@ -489,7 +489,7 @@ class Module(object):
         if isinstance(value, Entity):
           value = value.name
         elif isinstance(value, list):
-          if all(isinstance(x, basestring) for x in value):
+          if all(isinstance(x, str) for x in value):
             value = "; ".join(value)
           elif all(isinstance(x, Entity) for x in value):
             value = "; ".join([x.name for x in value])

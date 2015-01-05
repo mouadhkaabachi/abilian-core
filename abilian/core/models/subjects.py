@@ -6,7 +6,8 @@ See ICOM-ics-v1.0 "Subject Branch".
 TODO: I'm not a big fan of the "subject" name. Could be replaced by something
 else, like "people" or "principal" ?
 """
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
+from builtins import str
 
 from abc import ABCMeta, abstractmethod, abstractproperty
 import bcrypt
@@ -87,7 +88,7 @@ class ClearPasswordStrategy(PasswordStrategy):
     return user.password == password
 
   def process(self, user, password):
-    if not isinstance(password, unicode):
+    if not isinstance(password, str):
       password = password.decode('utf-8')
     return password
 
@@ -104,15 +105,15 @@ class BcryptPasswordStrategy(PasswordStrategy):
   def authenticate(self, user, password):
     current_passwd = user.password
     # crypt work only on str, not unicode
-    if isinstance(current_passwd, unicode):
+    if isinstance(current_passwd, str):
       current_passwd = current_passwd.encode('utf-8')
-    if isinstance(password, unicode):
+    if isinstance(password, str):
       password = password.encode('utf-8')
 
     return bcrypt.hashpw(password, current_passwd) == current_passwd
 
   def process(self, user, password):
-    if isinstance(password, unicode):
+    if isinstance(password, str):
       password = password.encode('utf-8')
     return bcrypt.hashpw(password, bcrypt.gensalt()).decode('utf-8')
 
@@ -171,6 +172,7 @@ class User(Principal, UserMixin, db.Model):
       self.set_password(password)
 
   def authenticate(self, password):
+    assert isinstance(password, str)
     if self.password and self.password != "*":
       return self.__password_strategy__.authenticate(self, password)
     else:

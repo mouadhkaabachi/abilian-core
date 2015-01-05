@@ -95,7 +95,7 @@ class RepositoryService(Service):
     """
     dest = self.abs_path(uuid)
     if not dest.parent.exists():
-      dest.parent.mkdir(0775, parents=True)
+      dest.parent.mkdir(0o775, parents=True)
 
     mode = 'tw'
     if not isinstance(content, unicode):
@@ -261,7 +261,7 @@ class SessionRepositoryService(Service):
 
     path = Path(app.instance_path, 'tmp', 'files_transactions')
     if not path.exists():
-      path.mkdir(0775, parents=True)
+      path.mkdir(0o775, parents=True)
 
     with app.app_context():
       self.app_state.path = path.resolve()

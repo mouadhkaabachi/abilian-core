@@ -2,7 +2,7 @@
 Add a few specific filters to Jinja2.
 """
 # Py3k
-from __future__ import absolute_import
+from __future__ import absolute_import, division
 from builtins import str
 
 import re
@@ -86,6 +86,7 @@ def filesize(d):
     s = "%.0f&nbsp;GB" % (d / 1e9)
 
   return Markup(s)
+
 
 def roughsize(size, above=20, mod=10):
   """
@@ -191,13 +192,14 @@ def abbrev(s, max_size):
   if len(s) <= max_size:
     return s
   else:
-    h = max_size / 2 - 1
+    h = max_size // 2 - 1
     return s[0:h] + "..." + s[-h:]
 
 
 @autoescape
 def linkify(s):
   return Markup(bleach.linkify(s))
+
 
 def obj_to_url(obj):
   """

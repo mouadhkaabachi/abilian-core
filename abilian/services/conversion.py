@@ -14,6 +14,7 @@ from builtins import str
 
 import glob
 import hashlib
+import io
 import shutil
 import logging
 from tempfile import mkstemp
@@ -43,7 +44,7 @@ from abilian.services.image import resize
 logger = logging.getLogger(__name__)
 
 # For some reason, twill includes a broken version of subprocess.
-assert not 'twill' in subprocess.__file__
+assert 'twill' not in subprocess.__file__
 
 # Hack for Mac OS + homebrew
 os.environ['PATH'] += ":/usr/local/bin"
@@ -352,14 +353,13 @@ class AbiwordTextHandler(Handler):
   def convert(self, blob, **kw):
     tmp_dir = self.TMP_DIR
     cur_dir = os.getcwd()
-    with make_temp_file(blob, suffix=".doc") as in_fn,\
+    with make_temp_file(blob, suffix=".doc") as in_fn, \
          make_temp_file(suffix='.txt') as out_fn:
       try:
         os.chdir(str(tmp_dir))
-        subprocess.check_call(
-          ['abiword',
-           '--to', os.path.basename(out_fn),
-          os.path.basename(in_fn)])
+        subprocess.check_call(['abiword',
+                               '--to', os.path.basename(out_fn),
+                               os.path.basename(in_fn)])
       except Exception as e:
         raise ConversionError(e)
       finally:
@@ -391,10 +391,9 @@ class AbiwordPDFHandler(Handler):
          make_temp_file(suffix='.pdf') as out_fn:
       try:
         os.chdir(TMP_DIR)
-        subprocess.check_call(
-          ['abiword',
-           '--to', os.path.basename(out_fn),
-          os.path.basename(in_fn)])
+        subprocess.check_call(['abiword',
+                               '--to', os.path.basename(out_fn),
+                               os.path.basename(in_fn)])
       except Exception as e:
         raise ConversionError(e)
       finally:
@@ -412,7 +411,7 @@ class ImageMagickHandler(Handler):
     with make_temp_file(blob) as in_fn, make_temp_file() as out_fn:
       try:
         subprocess.check_call(['convert', in_fn, "pdf:" + out_fn])
-        converted = open(out_fn).read()
+        converted = io.open(out_fn, "rb").read()
         return converted
       except Exception as e:
         raise ConversionError(e)
@@ -433,11 +432,12 @@ class PdfToPpmHandler(Handler):
 
         converted_images = []
         for fn in l:
-          converted = resize(open(fn).read(), size)
+          converted = resize(io.open(fn, 'rb').read(), size)
           converted_images.append(converted)
 
         return converted_images
       except Exception as e:
+        traceback.print_exc()
         raise ConversionError(e)
       finally:
         for fn in l:
@@ -508,7 +508,7 @@ class UnoconvPdfHandler(Handler):
     """
     timeout = self.run_timeout
     with make_temp_file(blob) as in_fn,\
-        make_temp_file(prefix='tmp-unoconv-', suffix=".pdf") as out_fn:
+         make_temp_file(prefix='tmp-unoconv-', suffix=".pdf") as out_fn:
 
       # Hack for my Mac, FIXME later
       if os.path.exists("/Applications/LibreOffice.app/Contents/program/python"):
@@ -538,7 +538,7 @@ class UnoconvPdfHandler(Handler):
           self._process = None
           raise ConversionError("Conversion timeout ({})".format(timeout))
 
-        converted = open(out_fn).read()
+        converted = io.open(out_fn, 'rb').read()
         return converted
       finally:
         self._process = None
@@ -565,11 +565,11 @@ class CloudoooPdfHandler(Handler):
     "xlsx": "ods",
     "ppt": "odp",
     "pptx": "odp",
-    }
+  }
 
   def convert(self, key):
     in_fn = "data/%s.blob" % key
-    in_mime_type = open("data/%s.mime" % key).read()
+    in_mime_type = io.open("data/%s.mime" % key).read()
     file_extension = mimetypes.guess_extension(in_mime_type).strip(".")
 
     data = encodestring(open(in_fn).read())
@@ -584,7 +584,7 @@ class CloudoooPdfHandler(Handler):
 
     converted = decodestring(data)
     new_key = hashlib.md5(converted).hexdigest()
-    fd = open("data/%s.blob" % new_key, "wcb")
+    fd = io.open("data/%s.blob" % new_key, "wcb")
     fd.write(converted)
     fd.close()
     return new_key
@@ -614,6 +614,7 @@ class WvwareTextHandler(Handler):
         converted_unicode = str(converted, errors="ignore")
 
       return converted_unicode
+
 
 # Utils
 @contextmanager
@@ -645,9 +646,9 @@ converter.register_handler(ImageMagickHandler())
 _unoconv_handler = UnoconvPdfHandler()
 converter.register_handler(_unoconv_handler)
 
-#converter.register_handler(AbiwordPDFHandler())
-#converter.register_handler(AbiwordTextHandler())
+# converter.register_handler(AbiwordPDFHandler())
+# converter.register_handler(AbiwordTextHandler())
 
 
 # Needs to be rewriten
-#converter.register_handler(CloudoooPdfHandler())
+# converter.register_handler(CloudoooPdfHandler())

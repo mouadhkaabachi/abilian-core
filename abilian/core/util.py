@@ -4,8 +4,7 @@ Various tools that don't belong some place specific.
 """
 # Py3k
 from __future__ import absolute_import
-from builtins import str
-from builtins import range
+from builtins import str, range
 
 import functools
 import logging
@@ -176,8 +175,10 @@ def slugify(value, separator=u"-"):
   """
     Slugify an unicode string, to make it URL friendly.
   """
-  value = str(value)
-  separator = str(separator)
+  if isinstance(value, bytes):
+    value = value.decode('utf8')
+  assert isinstance(value, str) and isinstance(separator, str)
+
   value = _NOT_WORD_RE.sub(u' ', value)
   value = unicodedata.normalize('NFKD', value)
   value = value.encode('ascii', 'ignore')

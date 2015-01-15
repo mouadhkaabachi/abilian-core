@@ -27,17 +27,15 @@ class SANotIndexable(IdMixin, db.Model):
 
 class Indexable(IdMixin, CoreIndexable, db.Model):
   __tablename__ = 'sa_indexable'
-  __indexation_args__ = dict(
-    index_to=(('related.name', ('name', 'text')),
-              ('related.description', 'text'),
-              ),
-    )
+  __indexation_args__ = {
+    'index_to': (
+      ('related.name', ('name', 'text')),
+      ('related.description', 'text'),
+    )}
 
   num = sa.Column(
     sa.Integer,
-    info=SEARCHABLE | dict(
-      index_to=(('num', NUMERIC(numtype=int)),)
-      ),
+    info=SEARCHABLE | {'index_to': (('num', NUMERIC(numtype=int)),)},
   )
 
 
@@ -60,7 +58,7 @@ class TestSAAdapter(TestCase):
     assert adapter.doc_attrs == {}
 
     adapter = SAAdapter(Entity, schema)
-    assert adapter.indexable == False
+    assert adapter.indexable is False
 
     adapter = SAAdapter(SubclassEntityIndexable, schema)
     assert adapter.indexable

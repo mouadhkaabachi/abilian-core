@@ -13,12 +13,10 @@ from flask import current_app
 from flask.ext.mail import Mail, Message
 from flask.ext.wtf.csrf import CsrfProtect
 from flask.ext.login import LoginManager
-
 import sqlalchemy as sa
+
 from abilian.core.logging import patch_logger
-
 from ..sqlalchemy import SQLAlchemy
-
 from .upstream_info import UpstreamInfo
 from .celery import Celery
 
@@ -49,8 +47,7 @@ def get_extension(name):
 #
 
 # patch flask.ext.mail.Message.send to always set enveloppe_from default mail
-# sender
-# FIXME: we'ld rather subclass Message and update all imports
+# sender (FIXME we'd rather subclass Message and update all imports).
 def _message_send(self, connection):
   """
   Sends a single message instance. If TESTING is True the message will
@@ -66,7 +63,6 @@ def _message_send(self, connection):
 
 patch_logger.info(Message.send)
 Message.send = _message_send
-
 
 
 @sa.event.listens_for(db.metadata, 'before_create')
@@ -88,7 +84,6 @@ def _filter_metadata_for_connection(target, connection, **kw):
     for idx in indexes:
       if engine not in idx.info.get('engines', default_engines):
         table.indexes.remove(idx)
-
 
 
 def _install_get_display_value(cls):
@@ -127,5 +122,3 @@ def _install_get_display_value(cls):
 
 
 sa.event.listen(db.Model, 'class_instrument', _install_get_display_value)
-
-

@@ -15,7 +15,6 @@ class UpstreamInfo(object):
   """
   Extension for sending informations to upstream server
   """
-
   def __init__(self, app=None):
     if app is not None:
       self.init_app(app)

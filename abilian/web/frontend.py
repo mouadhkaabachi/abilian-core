@@ -16,18 +16,16 @@ import re
 from flask import (session, redirect, request, g,
                    Blueprint, jsonify, make_response, url_for,
                    current_app, render_template)
+from werkzeug.exceptions import InternalServerError
 import sqlalchemy as sa
 from sqlalchemy import func
 from sqlalchemy.sql.expression import asc, desc, nullsfirst, nullslast
 from sqlalchemy import orm
-from werkzeug.exceptions import InternalServerError
 from xlwt import Workbook, XFStyle
-
 
 from abilian.core.entities import Entity
 from abilian.core.extensions import db
 from abilian.services import audit_service
-
 from . import search
 from .nav import BreadcrumbItem, Endpoint
 from .views import default_view, ObjectView, ObjectEdit, ObjectCreate, \
@@ -35,6 +33,7 @@ from .views import default_view, ObjectView, ObjectEdit, ObjectCreate, \
 from .forms.fields import ModelFieldList
 from .forms.widgets import Panel, Row, SingleView, RelatedTableView, \
     AjaxMainTableView
+
 
 logger = logging.getLogger(__name__)
 
@@ -82,8 +81,8 @@ def labelize(s):
 
 def make_single_view(form, **options):
   panels = []
-  for g in form._groups:
-    panel = Panel(g[0], *[ Row(x) for x in g[1] ])
+  for group in form._groups:
+    panel = Panel(group[0], *[ Row(x) for x in group[1] ])
     panels.append(panel)
   return SingleView(form, *panels, **options)
 
@@ -191,8 +190,8 @@ class ModuleMeta(type):
           if url == '/':
             cls._default_view = p
 
-            # Wrap views
-            #setattr(cls, p, _wrap_view(attr))
+            #  Wrap views
+            #  setattr(cls, p, _wrap_view(attr))
 
 
 class Module(object):
@@ -302,7 +301,6 @@ class Module(object):
     setattr(self, attr, view)
     self._urls.append((url, attr, view.methods))
 
-
   def init_related_views(self):
     related_views = []
     for view in self.related_views:
@@ -354,7 +352,6 @@ class Module(object):
     g.breadcrumb.append(BreadcrumbItem(label=self.name,
                         url=Endpoint('.list_view')))
 
-
   def query(self, request):
     """ Return filtered query based on request args
     """
@@ -394,8 +391,15 @@ class Module(object):
       rel_model = sort_col.property.mapper.class_
       sort_col = getattr(rel_model, rel_sort_name)
 
+    try:
+      # SQLAlchemy 0.8
+      from sqlalchemy.types import _DateAffinity
+    except ImportError:
+      # SQLAlchemy 0.9
+      from sqlalchemy.sql.sqltypes import _DateAffinity
+
     # XXX: Big hack, date are sorted in reverse order by default
-    if isinstance(sort_col, sa.types._DateAffinity):
+    if isinstance(sort_col, _DateAffinity):
       sort_dir = 'asc' if sort_dir == 'desc' else 'desc'
     elif isinstance(sort_col, sa.types.String):
       sort_col = func.lower(sort_col)
@@ -576,8 +580,6 @@ class Module(object):
 
     result = {'results': [ { 'id': r[0], 'text': r[1]} for r in all ] }
     return jsonify(result)
-
-
 
   #
   # Utils

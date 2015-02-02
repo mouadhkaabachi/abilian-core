@@ -19,7 +19,8 @@ from collections import namedtuple
 
 import bleach
 import sqlalchemy as sa
-from flask import render_template, json, Markup, render_template_string
+import werkzeug.datastructures
+from flask import g, render_template, json, Markup, render_template_string
 from flask.ext.babel import format_date, format_datetime, get_locale
 import wtforms
 from wtforms.widgets import (
@@ -114,7 +115,8 @@ class BaseTableView(object):
       self.show_search = self.show_controls
 
     self.init_columns(columns)
-    self.name = id(self)
+    self.name = u'{}-{:d}'.format(self.__class__.__name__.lower(),
+                                  next(g.id_generator))
     if options is not None:
       self.options = options
       self.show_controls = self.options.get('show_controls', self.show_controls)
@@ -296,7 +298,8 @@ class AjaxMainTableView(object):
     advanced_search_filters = [dict(name=c.name,
                                     label=str(c.label),
                                     type=c.form_filter_type,
-                                    args=c.form_filter_args)
+                                    args=c.form_filter_args,
+                                    unset=c.form_unset_value,)
                                for c in self.search_criterions
                                if c.has_form_filter]
     if advanced_search_filters:
@@ -571,6 +574,14 @@ class ImageInput(object):
     field_id = kwargs.pop('id', field.id)
     image_url = None
     value = kwargs.get('value', field.data)
+
+    if value and isinstance(value, werkzeug.datastructures.FileStorage):
+      # happens during POST with a validation error: value is the submitted
+      # value. Generally the get() page is rendered, but in the case of file
+      # inputs it will not work: user has to re-select the file to upload.  Thus
+      # we restore object value, so that user is aware that the file has not
+      # changed.
+      value = field.object_data
 
     if value:
       if hasattr(value, 'url'):
@@ -951,9 +962,15 @@ class ListWidget(wtforms.widgets.ListWidget):
     return wtforms.widgets.HTMLString(''.join(html))
 
   def render_view(self, field):
-    data = ([label for v, label, checked in field.iter_choices() if checked]
-            if hasattr(field, 'iter_choices') and callable(field.iter_choices)
-            else field.object_data)
+    data = field.data
+    is_empty = data == [] if field.multiple else data is None
+
+    if not is_empty:
+      data = ([label for v, label, checked in field.iter_choices() if checked]
+              if hasattr(field, 'iter_choices') and callable(field.iter_choices)
+              else field.object_data)
+    else:
+      data = []
 
     return render_template_string(
       '''{%- for obj in data %}
@@ -1049,8 +1066,16 @@ class Select2(Select):
     return Select.__call__(self, field, *args, **kwargs)
 
   def render_view(self, field, **kwargs):
-    labels = [label for v, label, checked in field.iter_choices() if checked]
+    labels = [unicode(label)
+              for v, label, checked in field.iter_choices()
+              if checked]
     return u'; '.join(labels)
+
+  @classmethod
+  def render_option(cls, value, label, selected, **kwargs):
+    if value is None:
+      return HTMLString('<option></option>')
+    return Select.render_option(value, label, selected, **kwargs)
 
 
 class Select2Ajax(object):

@@ -11,7 +11,7 @@ import logging
 import logging.config
 import importlib
 
-from itertools import chain
+from itertools import chain, count
 from functools import partial
 from pkg_resources import resource_filename
 from pathlib import Path
@@ -22,8 +22,10 @@ from sqlalchemy.orm.attributes import NO_VALUE
 from werkzeug.datastructures import ImmutableDict
 from babel.dates import LOCALTZ
 import jinja2
-from flask import Flask, g, request, current_app, has_app_context, \
-  render_template, request_started, Blueprint, abort
+from flask import (
+  Flask, g, request, current_app, has_app_context, render_template,
+  request_started, Blueprint, abort, appcontext_pushed, appcontext_popped,
+  )
 from flask.config import ConfigAttribute
 from flask.helpers import locked_cached_property
 from flask.ext.assets import Bundle, Environment as AssetsEnv
@@ -111,6 +113,9 @@ default_config.update(
         'abilian.services.vocabularies.admin.VocabularyPanel',
     ),
     SENTRY_USER_ATTRS=('email', 'first_name', 'last_name',),
+    SENTRY_INSTALL_CLIENT_JS=True, # also install client JS
+    SENTRY_JS_VERSION='1.1.16',
+    SENTRY_JS_PLUGINS=('jquery', 'native', 'require'),
     LOGO_URL=Endpoint('abilian_static', filename='img/logo-abilian-32x32.png'),
     ABILIAN_UPSTREAM_INFO_ENABLED=False,  # upstream info extension
     TRACKING_CODE_SNIPPET=u'',  # tracking code to insert before </body>
@@ -153,6 +158,7 @@ class Application(Flask, ServiceManager, PluginManager):
     Flask.__init__(self, name, *args, **kwargs)
     del self._ABILIAN_INIT_TESTING_FLAG
 
+    appcontext_pushed.connect(self._install_id_generator)
     ServiceManager.__init__(self)
     PluginManager.__init__(self)
     self.default_view = ViewRegistry()
@@ -265,6 +271,9 @@ class Application(Flask, ServiceManager, PluginManager):
       else:
         with self.app_context():
           self.start_services()
+
+  def _install_id_generator(self, sender, **kwargs):
+    g.id_generator = count(start=1)
 
   def _setup_nav_and_breadcrumbs(self, app=None):
     """

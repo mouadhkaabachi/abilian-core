@@ -14,6 +14,7 @@ from flask.ext.mail import Mail, Message
 from flask.ext.wtf.csrf import CsrfProtect
 from flask.ext.login import LoginManager
 import sqlalchemy as sa
+from sqlalchemy.engine import Engine
 
 from abilian.core.logging import patch_logger
 from ..sqlalchemy import SQLAlchemy
@@ -61,6 +62,7 @@ def _message_send(self, connection):
   self.extra_headers['Sender'] = sender
   connection.send(self, sender)
 
+
 patch_logger.info(Message.send)
 Message.send = _message_send
 
@@ -87,7 +89,6 @@ def _filter_metadata_for_connection(target, connection, **kw):
 
 
 def _install_get_display_value(cls):
-
   _MARK = object()
 
   def display_value(self, field_name, value=_MARK):
@@ -122,3 +123,15 @@ def _install_get_display_value(cls):
 
 
 sa.event.listen(db.Model, 'class_instrument', _install_get_display_value)
+
+
+#
+# Make Sqlite a bit more well-behaved.
+#
+@sa.event.listens_for(Engine, "connect")
+def _set_sqlite_pragma(dbapi_connection, connection_record):
+  from sqlite3 import Connection as SQLite3Connection
+  if isinstance(dbapi_connection, SQLite3Connection):  # pragma: no cover
+    cursor = dbapi_connection.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON;")
+    cursor.close()

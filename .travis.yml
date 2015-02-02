@@ -5,6 +5,12 @@ python:
 env:
   - SQLALCHEMY_DATABASE_URI="sqlite://"
   - SQLALCHEMY_DATABASE_URI="postgres://postgres@localhost:5432/abilian_core"
+  - SQLALCHEMY_DATABASE_URI="mysql://root@localhost/abilian_core"
+
+matrix:
+  allow_failures:
+    - env: SQLALCHEMY_DATABASE_URI="mysql://root@localhost/abilian_core"
+  fast_finish: true
 
 services:
   - redis-server

@@ -20,6 +20,7 @@ pathlib
 # Databases / persistence
 SQLAlchemy>=0.8,<0.9
 psycopg2
+MySQL-python
 alembic>=0.6.7
 redis>=2.10.1
 

@@ -17,9 +17,3 @@ BASEDIR = os.path.dirname(__file__)
 class IntegrationTestCase(BaseTestCase):
   config_class = TestConfig
   no_login = False
-
-  def assert_302(self, response):
-    self.assert_status(response, 302)
-
-  def assert_204(self, response):
-    self.assert_status(response, 204)

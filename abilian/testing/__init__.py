@@ -1,22 +1,22 @@
 """
 Elements to build test cases for an :class:`abilian.app.Application`
 """
-from past.builtins import basestring
-
 import os
 from time import time
 import subprocess
-import requests
 import tempfile
 import shutil
 import warnings
-from pathlib import Path
 
+from past.builtins import basestring
+import requests
+from pathlib import Path
 from sqlalchemy.exc import SAWarning
 from flask import url_for
 from flask.ext.testing import TestCase
 from flask.ext.login import login_user, logout_user
 from flask.ext.assets import Bundle
+
 from abilian.app import Application
 from abilian.core.models.subjects import User, ClearPasswordStrategy
 
@@ -137,7 +137,7 @@ class BaseTestCase(TestCase):
     tmp_dir = Path(tempfile.mkdtemp(prefix='tmp-py-unittest-',
                                     suffix='-' + cls.__name__,))
     cls.TEST_INSTANCE_PATH = str(tmp_dir)
-    for p in (tmp_dir/'tmp', tmp_dir/'cache', tmp_dir/'data'):
+    for p in (tmp_dir/'tmp', tmp_dir/'cache', tmp_dir/'data'):  # noqa
       p.mkdir()
 
     sa_warn = 'error' if cls.SQLALCHEMY_WARNINGS_AS_ERROR else 'default'
@@ -208,7 +208,6 @@ class BaseTestCase(TestCase):
       svc = self.app.services[svc]
       if not svc.running:
         svc.start()
-
 
   def tearDown(self):
     for svc in self.SERVICES:
@@ -307,7 +306,6 @@ class BaseTestCase(TestCase):
 
     return LoginContext(self)
 
-
   def client_logout(self):
     """
     Like :meth:`logout` but with a web logout
@@ -320,9 +318,6 @@ class BaseTestCase(TestCase):
     Shortcut to the application db object.
     """
     return self.app.extensions['sqlalchemy'].db
-
-  def assert_302(self, response):
-    self.assert_status(response, 302)
 
   def get(self, url, validate=True):
     """
@@ -356,7 +351,6 @@ class BaseTestCase(TestCase):
   def validate(self, url, content, content_type, validator_url):
     response = requests.post(validator_url + '?out=json', content,
                              headers={'Content-Type': content_type})
-
     body = response.json()
 
     for message in body['messages']:

@@ -1,6 +1,6 @@
 .PHONY: test pep8 pylama clean docs tox
 
-# The source director
+# The source directory
 SRC=abilian
 # The package name
 PKG=abilian
@@ -8,7 +8,7 @@ PKG=abilian
 NCPU=2
 
 
-all: test doc
+all: test
 
 #
 # Setup
@@ -59,7 +59,7 @@ pytest-flake:
 	py.test --flakes -m flakes $(SRC) tests
 
 flake8:
-	flake8 $(SRC)
+	flake8 --max-complexity 12 $(SRC)
 
 pylama:
 	pylama $(SRC)
@@ -75,11 +75,8 @@ vagrant-tests:
 	vagrant ssh -c /vagrant/deploy/vagrant_test.sh
 
 #
-# Everything else
+# Doc
 #
-install:
-	python setup.py install
-
 doc: doc-html doc-pdf
 
 doc-html:
@@ -88,6 +85,13 @@ doc-html:
 doc-pdf:
 	sphinx-build -b latex docs/ docs/_build/latex
 	make -C docs/_build/latex all-pdf
+
+
+#
+# Everything else
+#
+publish:
+	python setup.py sdist bdist_wheel upload
 
 clean:
 	find . -name "*.pyc" | xargs rm -f
@@ -108,3 +112,4 @@ tidy: clean
 update-pot:
 	# _n => ngettext, _l => lazy_gettext
 	python setup.py extract_messages update_catalog compile_catalog
+

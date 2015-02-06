@@ -37,6 +37,7 @@ from abilian.core import extensions, signals, redis
 import abilian.core.util
 from abilian.web.action import actions
 from abilian.web.views import Registry as ViewRegistry
+from abilian.web.views.images import user_photo_url
 from abilian.web.nav import BreadcrumbItem, Endpoint
 from abilian.web.filters import init_filters
 from abilian.web.util import send_file_from_directory, url_for
@@ -425,12 +426,21 @@ class Application(Flask, ServiceManager, PluginManager):
     from abilian.core.jinjaext import DeferredJS
     DeferredJS(self)
 
+    # auth_service installs a `before_request` handler (actually it's
+    # flask-login). We want to authenticate user ASAP, so that sentry and logs
+    # can report which user encountered any error happening later, in particular
+    # in a before_request handler (like csrf validator)
+    auth_service.init_app(self)
+
     # webassets
     self._setup_asset_extension()
     self._register_base_assets()
 
     # Babel (for i18n)
     abilian.i18n.babel.init_app(self)
+    abilian.i18n.babel.add_translations('wtforms',
+                                        translations_dir='locale',
+                                        domain='wtforms')
     abilian.i18n.babel.add_translations('abilian')
     abilian.i18n.babel.localeselector(get_locale)
     abilian.i18n.babel.timezoneselector(get_timezone)
@@ -450,7 +460,6 @@ class Application(Flask, ServiceManager, PluginManager):
     self.register_blueprint(images_bp)
 
     # Abilian Core services
-    auth_service.init_app(self)
     security_service.init_app(self)
     repository_service.init_app(self)
     session_repository_service.init_app(self)
@@ -535,12 +544,13 @@ class Application(Flask, ServiceManager, PluginManager):
   def create_jinja_environment(self):
     env = Flask.create_jinja_environment(self)
     env.globals.update(
-      app=current_app,
-      csrf=csrf,
-      get_locale=babel_get_locale,
-      local_dt=abilian.core.util.local_dt,
-      url_for=url_for,
-      NO_VALUE=NO_VALUE,
+        app=current_app,
+        csrf=csrf,
+        get_locale=babel_get_locale,
+        local_dt=abilian.core.util.local_dt,
+        url_for=url_for,
+        user_photo_url=user_photo_url,
+        NO_VALUE=NO_VALUE,
     )
     init_filters(env)
     return env

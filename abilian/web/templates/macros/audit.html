@@ -5,7 +5,7 @@
   <ul>
     {%- for key, values in changes.columns.items() %}
       <li>
-        {%- if values.columns %}
+        {%- if values.columns|default(None) != None %}
           {{ _('{key} changed:').format(key=_key_fmt(key)) }}
           {{ m_audit_field_changes(values) }}
         {%- else %}
@@ -35,7 +35,7 @@
 {% macro m_audit_entry(entry) %}
     <div>
       {#- FIXME: use macro for user avatar #}
-      <img src="{{ url_for("images.user_avatar", user_id=entry.user.id, s=16) }}" alt=""/>
+      <img src="{{ user_photo_url(entry.user, size=16) }}" alt=""/>
       <a href="{{ url_for("social.user", user_id=entry.user.id) }}">{{ entry.user.name }}</a>
       {%- if entry.related or entry.op == 1 %}
         made changes on {{ entry.happened_at.strftime('%Y-%m-%d %H:%M') }}

@@ -12,7 +12,7 @@ from typing import Dict, Set
 import sqlalchemy as sa
 from flask import current_app, g
 from flask_login import current_user
-from future.utils import string_types
+from six import string_types
 from sqlalchemy import sql
 from sqlalchemy.orm import object_session, subqueryload
 

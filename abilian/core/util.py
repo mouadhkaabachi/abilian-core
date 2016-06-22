@@ -17,6 +17,7 @@ from math import ceil
 import pytz
 from babel.dates import LOCALTZ
 from flask import current_app, request
+from six import text_type, string_types
 from werkzeug.local import LocalProxy
 
 try:
@@ -66,7 +67,7 @@ def noproxy(obj):
 def fqcn(cls):
     """Fully Qualified Class Name.
     """
-    return unicode(cls.__module__ + '.' + cls.__name__)
+    return cls.__module__ + '.' + cls.__name__
 
 
 def friendly_fqcn(cls_name):
@@ -218,9 +219,10 @@ _NOT_WORD_RE = re.compile(r'[^\w\s]+', flags=re.UNICODE)
 def slugify(value, separator="-"):
     """Slugify an unicode string, to make it URL friendly.
     """
-    value = unicode(value)
-    separator = unicode(separator)
-    value = _NOT_WORD_RE.sub(u' ', value)
+    assert isinstance(value, text_type)
+    assert isinstance(separator, text_type)
+
+    value = _NOT_WORD_RE.sub(' ', value)
     value = unicodedata.normalize('NFKD', value)
     value = value.encode('ascii', 'ignore')
     value = value.decode('ascii')

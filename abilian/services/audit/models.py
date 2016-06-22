@@ -15,6 +15,7 @@ import pickle
 from datetime import datetime
 
 from flask import current_app
+from six import text_type, string_types
 from sqlalchemy.orm import relationship
 from sqlalchemy.schema import Column, ForeignKey
 from sqlalchemy.types import Binary, DateTime, Integer, String, UnicodeText
@@ -143,8 +144,9 @@ class AuditEntry(db.Model):
         if isinstance(changes, dict):
             changes = Changes.from_legacy(changes)
 
-        for k, v in changes.columns.iteritems():
-            k = unicode(k)
+        for k, v in changes.columns.items():
+            assert isinstance(k, text_type)
+            # k = unicode(k)
             uv = []
             if isinstance(v, Changes):
                 # field k is a related model with its own changes
@@ -164,7 +166,7 @@ class AuditEntry(db.Model):
                 uv = tuple(uv)
             uchanges.columns[k] = uv
 
-        for attr_name, (appended, removed) in changes.collections.iteritems():
+        for attr_name, (appended, removed) in changes.collections.items():
             appended = sorted(unicode(i) for i in appended)
             removed = sorted(unicode(i) for i in removed)
             uchanges.collections[attr_name] = (appended, removed)

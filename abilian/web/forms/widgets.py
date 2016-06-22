@@ -24,7 +24,7 @@ from flask import (Markup, current_app, g, json, render_template,
 from flask_babel import format_date, format_datetime, format_number, get_locale
 from flask_login import current_user
 from flask_wtf.file import FileField
-from future.utils import string_types
+from six import string_types
 from wtforms.widgets import PasswordInput as BasePasswordInput
 from wtforms.widgets import TextArea as BaseTextArea
 from wtforms.widgets import HTMLString, Input, Select, html_params

@@ -30,7 +30,7 @@ from pathlib import Path
 from tempfile import mkstemp
 from xmlrpclib import ServerProxy
 
-from future.utils import raise_from, string_types
+from six import raise_from, string_types
 from magic import Magic
 from PIL import Image
 from PIL.ExifTags import TAGS

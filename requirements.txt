@@ -52,7 +52,7 @@ PyYAML
 pygeoip
 typing
 
-progressbar
+#progressbar
 
 # Forms (TODO: need some updates)
 WTForms-Alchemy>=0.12,<0.16

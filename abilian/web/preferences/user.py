@@ -5,7 +5,7 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 import imghdr
-from cStringIO import StringIO
+from io import BytesIO
 
 import babel
 import PIL.Image
@@ -79,7 +79,7 @@ class UserPreferencesForm(Form):
 
         # convert to jpeg
         #FIXME: better do this at model level?
-        jpeg = StringIO()
+        jpeg = BytesIO()
         im.convert('RGBA').save(jpeg, 'JPEG')
         field.data = jpeg.getvalue()
 

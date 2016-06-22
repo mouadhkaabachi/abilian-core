@@ -5,7 +5,7 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 import uuid
-from StringIO import StringIO
+from io import StringIO
 
 from six import text_type
 

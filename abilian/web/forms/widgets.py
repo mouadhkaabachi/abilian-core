@@ -11,10 +11,9 @@ import base64
 import cgi
 import logging
 import re
-import urlparse
+from six.moves.urllib.parse import urlparse
 from collections import namedtuple
 from datetime import datetime
-from itertools import ifilter
 
 import bleach
 import sqlalchemy as sa
@@ -1401,7 +1400,7 @@ class ModelListWidget(object):
         rows = []
         for entry in field.entries:
             row = []
-            for f in ifilter(lambda f: not f.is_hidden, entry.form):
+            for f in filter(lambda f: not f.is_hidden, entry.form):
                 row.append(Markup(f.render_view()))
 
             rows.append(Data(*row))

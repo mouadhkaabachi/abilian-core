@@ -73,17 +73,17 @@ class Role(UniqueName):
     def __init__(self, name, label=None, assignable=True):
         UniqueName.__init__(self, name)
         if label is None:
-            label = u'role_' + unicode(name)
-        if isinstance(label, unicode):
-            label = _l(label)
+            label = 'role_' + name
+        assert isinstance(name, text_type)
+        label = _l(label)
         self.label = label
         self.assignable = assignable
 
     def __unicode__(self):
-        return unicode(self.label)
+        return self.label
 
     def __lt__(self, other):
-        return unicode(self).__lt__(unicode(other))
+        return text_type(self).__lt__(text_type(other))
 
     @classmethod
     def assignable_roles(cls):

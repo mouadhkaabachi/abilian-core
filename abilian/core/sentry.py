@@ -7,6 +7,7 @@ from __future__ import (absolute_import, division, print_function,
 from flask import current_app, request
 from flask_login import user_logged_in
 from raven.contrib.flask import Sentry as RavenExt
+from six import text_type
 
 
 class Sentry(RavenExt):

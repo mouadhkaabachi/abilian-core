@@ -78,7 +78,7 @@ class UserPreferencesForm(Form):
             raise ValidationError(_(u'Could not decode image file'))
 
         # convert to jpeg
-        #FIXME: better do this at model level?
+        # FIXME: better do this at model level?
         jpeg = BytesIO()
         im.convert('RGBA').save(jpeg, 'JPEG')
         field.data = jpeg.getvalue()

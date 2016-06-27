@@ -199,13 +199,13 @@ class Babel(BabelBase):
             if not (path.exists() and path.is_dir()):
                 continue
 
-            if not os.access(str(path), os.R_OK):
+            if not os.access(text_type(path), os.R_OK):
                 self.app.logger.warning(
                     "Babel translations: read access not allowed {}, skipping."
                     "".format(path))
                 continue
 
-            self._translations_paths.append((str(path), domain))
+            self._translations_paths.append((text_type(path), domain))
 
 
 class Translations(BaseTranslations):

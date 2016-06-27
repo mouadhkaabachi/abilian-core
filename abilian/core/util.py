@@ -17,16 +17,14 @@ from math import ceil
 import pytz
 from babel.dates import LOCALTZ
 from flask import current_app, request
-from six import text_type, string_types
+
+from six import text_type
 from werkzeug.local import LocalProxy
 
 try:
     import ipdb as pdb
 except ImportError:
     import pdb
-
-if sys.version_info[0] > 2:
-    unicode = str
 
 
 def pdb_on_error(fn):

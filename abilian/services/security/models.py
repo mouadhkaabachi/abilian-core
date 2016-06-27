@@ -38,6 +38,7 @@ class Permission(UniqueName):
         UniqueName.__init__(self, name)
         if label is None:
             label = 'permission_{}'.format(name)
+
         if isinstance(label, text_type):
             label = _l(label)
         self.label = label

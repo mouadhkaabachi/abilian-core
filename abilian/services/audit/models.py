@@ -15,7 +15,7 @@ import pickle
 from datetime import datetime
 
 from flask import current_app
-from six import text_type, string_types
+from six import text_type
 from sqlalchemy.orm import relationship
 from sqlalchemy.schema import Column, ForeignKey
 from sqlalchemy.types import Binary, DateTime, Integer, String, UnicodeText
@@ -109,7 +109,7 @@ class AuditEntry(db.Model):
             repr(self.id), {CREATION: "CREATION",
                             DELETION: "DELETION",
                             UPDATE: "UPDATE"}[self.op],
-            repr(unicode(self.user)), 'related '
+            repr(text_type(self.user)), 'related '
             if self.related else '', self.entity_type, self.entity_id)
 
     @property
@@ -167,8 +167,8 @@ class AuditEntry(db.Model):
             uchanges.columns[k] = uv
 
         for attr_name, (appended, removed) in changes.collections.items():
-            appended = sorted(unicode(i) for i in appended)
-            removed = sorted(unicode(i) for i in removed)
+            appended = sorted(text_type(i) for i in appended)
+            removed = sorted(text_type(i) for i in removed)
             uchanges.collections[attr_name] = (appended, removed)
 
         return uchanges
